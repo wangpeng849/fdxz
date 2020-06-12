@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fii.fdxz.mapper.NoticeMapper">
+    <sql id="baseColumn">
+        id,title,content,attachment,`level`,mode,publisher,send_time,send_to,status,task_attribute,send_time,question_end_time,create_time,update_time
+    </sql>
+
+    <select id="queryNotice" resultType="com.fii.fdxz.pojo.po.NoticeInfo">
+        select
+        <include refid="baseColumn"/>
+        from tb_notice
+    </select>
+    
+    <select id="queryConfirmNoticeByGrade" resultType="com.fii.fdxz.pojo.po.StudentInfo">
+        SELECT * FROM tb_student WHERE id in(
+            SELECT
+                stu_id
+            FROM
+                `tb_notice_student`
+            WHERE
+                `STATUS` = #{status}
+            AND grade_id = #{gradeId}
+            AND notice_id = #{noticeId}
+        )
+    </select>
+
+    <select id="queryConfirmNoticeByStudent" resultType="java.lang.Integer">
+        SELECT
+            `status`
+        FROM
+            tb_notice_student
+        WHERE
+            id = (
+                SELECT
+                    `id`
+                FROM
+                    tb_student
+                WHERE
+                    `name` = #{stuName}
+            )
+    </select>
+</mapper>
